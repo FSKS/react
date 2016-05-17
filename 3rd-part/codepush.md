@@ -10,6 +10,8 @@
 ## How to Use?
 ### Register
 ### Cli
+[CodePush CLI](./codepush/README.md)
+
 ### Best Practice
 
 ## References
