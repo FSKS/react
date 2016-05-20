@@ -266,11 +266,11 @@ code-push release <appName> <updateContents> <targetBinaryVersion>
 [--rollout <rolloutPercentage>]
 ```
 
-#### App name 参数
+#### App name (应用名)参数
 
 指定将发布更新的CodePush 应用名。这个与最初你调用`code-push app add`（如："MyApp-Android"）的名字保持一致。如果你想查一下，可以运行`code-push app ls`命令看看应用的列表。
 
-#### Update contents 参数
+#### Update contents (更新内容)参数
 
 指定应用更新的代码和资源位置。你可以提供要么一个单独文件（如：React Native的JS bundle文件），或者一个文件夹路径（如：Cordova应用的`/platforms/ios/www`文件夹）。注意你不需要为了部署更新而对文件或文件夹进行Zip压缩，因为CLI会帮你自动ZIP压缩。
 
@@ -285,67 +285,67 @@ code-push release <appName> <updateContents> <targetBinaryVersion>
 | React Native wo/assets (iOS)    | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <bundleOutput> --dev false`   | `--bundle-output` 参数的值  |
 | React Native w/assets (iOS)      | `react-native bundle --platform ios --entry-file <entryFile> --bundle-output <releaseFolder>/<bundleOutput> --assets-dest <releaseFolder> --dev false` | `--assets-dest` 参数的值，应该是一个包含资源和JS bundle的新创建的目录。|
 
-#### Target binary version 参数
+#### Target binary version (目标二进制版本)参数
 
-This specifies the store/binary version of the application you are releasing the update for, so that only users running that version will receive the update, while users running an older and/or newer version of the app binary will not. This is useful for the following reasons:
+这是你想发布更新的特定仓库/二进制版本，这样只有那个版本上的用户才会接收到更新，而那些运行较老/新版本用户则不会。这样很有用，原因如下：
 
-1. If a user is running an older binary version, it's possible that there are breaking changes in the CodePush update that wouldn't be compatible with what they're running.
+1. 如果有用户运行一个很老的版本，有可能在CodePush的更新里有个破坏性的更新，这跟他们现在运行的版本不兼容。
 
-2. If a user is running a newer binary version, then it's presumed that what they are running is newer (and potentially incompatible) with the CodePush update.
+2. 如果用户正在运行一个新的二进制版本，那么假定，他们正在运行并更新CodePush 更新（可能不兼容）。
 
-If you ever want an update to target multiple versions of the app store binary, we also allow you to specify the 参数 as a [semver range expression](https://github.com/npm/node-semver#advanced-range-syntax). That way, any client device running a version of the binary that satisfies the range expression (i.e. `semver.satisfies(version, range)` returns `true`) will get the update. Examples of valid semver range expressions are as follows:
+如果你想更新应用商店里二进制文件的多个版本，我们允许你指定参数像这样[语义版本范围表达式](https://github.com/npm/node-semver#advanced-range-syntax)。这样， 任何在版本号范围内（如：`semver.satisfies(version, range)` returns `true`）的客户端设备都能获得更新。
 
-| Range Expression | Who gets the update                                                                    |
+如下是有效的版本号范围表达式的例子：
+
+| 范围表达式 | 谁获得更新                                                                    |
 |------------------|----------------------------------------------------------------------------------------|
-| `1.2.3`          | Only devices running the specific binary app store version `1.2.3` of your app         |
-| `*`              | Any device configured to consume updates from your CodePush app                        |
-| `1.2.x`          | Devices running major version 1, minor version 2 and any patch version of your app     |
-| `1.2.3 - 1.2.7`  | Devices running any binary version between `1.2.3` (inclusive) and `1.2.7` (inclusive) |
-| `>=1.2.3 <1.2.7` | Devices running any binary version between `1.2.3` (inclusive) and `1.2.7` (exclusive) |
-| `~1.2.3`         | Equivalent to `>=1.2.3 <1.3.0`                                                         |
-| `^1.2.3`         | Equivalent to `>=1.2.3 <2.0.0`                                                         |
+| `1.2.3`          | 只有`1.2.3`版本  |
+| `*`                 | 所有版本                    |
+| `1.2.x`          | 主版本为1，小版本为2的任何版本  |
+| `1.2.3 - 1.2.7`  | 在 `1.2.3` (包含) 和 `1.2.7` (包含) 之间的版本 |
+| `>=1.2.3 <1.2.7` | 在 `1.2.3` (包含) 和 `1.2.7` (不包含)之间的版本 |
+| `~1.2.3`         | 相当于`>=1.2.3 <1.3.0`                                                         |
+| `^1.2.3`         | 相当于`>=1.2.3 <2.0.0`                                                         |
 
-*NOTE: If your semver expression starts with a special shell character or operator such as `>`, `^`, or **
-*, the command may not execute correctly if you do not wrap the value in quotes as the shell will not supply the right values to our CLI process. Therefore, it is best to wrap your `targetBinaryVersion` 参数 in double quotes when calling the `release` command, e.g. `code-push release MyApp updateContents ">1.2.3"`.*
+*注意：如果语义表达式以特殊字符开始如`>`,`^`或***，如果你没有用引号括起来的话命令可能执行不对，因为shell在CLI里不支持右边的值。所以，当调用`release`命令时最好能把你的`targetBinaryVersion`参数用双引号括起来，如：`code-push release MyApp updateContents ">1.2.3"`。*
 
-The following table outlines the version value that CodePush expects your update's semver range to satisfy for each respective app type:
-
-| Platform               | Source of app store version                                                  |
+如下表格分别概括了每个应用类型的CodePush更新的语义版本范围的版本值：
+| 平台               | 应用商店版本来源 |
 |------------------------|------------------------------------------------------------------------------|
-| Cordova                | The `<widget version>` attribute in the `config.xml` file                    |
-| React Native (Android) | The `android.defaultConfig.versionName` property in your `build.gradle` file |
-| React Native (iOS)     | The `CFBundleShortVersionString` key in the `Info.plist` file                |
-| React Native (Windows) | The `<Identity Version>` key in the `Package.appxmanifest` file                                |
+| Cordova                | 在`config.xml`文件里的`<widget version>` 属性   |
+| React Native (Android) | 在`build.gradle`文件里 `android.defaultConfig.versionName` 属性 |
+| React Native (iOS)     | 在`Info.plist`文件里的`CFBundleShortVersionString` 键          |
+| React Native (Windows) | 在`Package.appxmanifest`文件的 `<Identity Version>` 键     |
 
-*NOTE: If the app store version in the metadata files are missing a patch version, e.g. `2.0`, it will be treated as having a patch version of `0`, i.e. `2.0 -> 2.0.0`.*
+*注意：如果在元数据文件里的应用版本号漏掉补丁版本值，如`2.0`，它将被当成补丁版本值为`0`，如：`2.0 当成 2.0.0`.*
 
-#### Deployment name 参数
+#### Deployment name (部署环境名)参数
 
-This specifies which deployment you want to release the update to. This defaults to `Staging`, but when you're ready to deploy to `Production`, or one of your own custom deployments, just explicitly set this argument.
+这是你想发布更新到的那个指定部署环境名。默认为`Staging`(临时环境)，但是当你准备部署到`Production`(生产环境)或一个你自定义的部署环境时，你只要指明设置这个参数即可。
 
-*NOTE: The 参数 can be set using either "--deploymentName" or "-d".*
+*注意：这个参数可以用"--deploymentName" 或 "-d"来设置。*
 
-#### Description 参数
+#### Description (描述)参数
 
-This provides an optional "change log" for the deployment. The value is simply round tripped to the client so that when the update is detected, your app can choose to display it to the end-user (e.g. via a "What's new?" dialog). This string accepts control characters such as `\n` and `\t` so that you can include whitespace formatting within your descriptions for improved readability.
+给部署提供一个可选的"更新日志"。当被检测到有更新时这个值就会完整的传到客户端，所以你的应用可以选择显示给终端用户（如：通过一个`哪些新东西？`的对话框）。这个字符串可以接受控制字符如`\n` 和 `\t`，以便你可以包含空白格式在你的描述里来提高可读性。
 
-*NOTE: This 参数 can be set using either "--description" or "-desc"*
+*注意：这个参数可以用"--description" 或 "-desc"来设置。*
 
-#### Mandatory 参数
+#### Mandatory (强制性)参数
 
-This specifies whether the update should be considered mandatory or not (e.g. it includes a critical security fix). This attribute is simply round tripped to the client, who can then decide if and how they would like to enforce it.
+这个标识该更新是否是强制性的（如：包含一个严重的安全修复）。这个属性简单的传到客户端，然后客户端决定是否要强制更新。
 
-*NOTE: This 参数 is simply a "flag", and therefore, its absence indicates that the release is optional, and its presence indicates that it's mandatory. You can provide a value to it (e.g. `--mandatory true`), however, simply specifying `--mandatory` is sufficient for marking a release as mandatory.*
+*注意: 这个参数是简单的一个"标记"，所以，没有该标记表示版本更新可选，如果有标记则表示版本是强制更新的。你可以给它赋值（如：`--mandatory true`)，但其实简单的`--mandatory`就已能标识强制更新了。*
 
-The mandatory attribute is unique because the server will dynamically modify it as necessary in order to ensure that the semantics of your releases are maintained for your end-users. For example, imagine that you released the following three updates to your app:
+强制属性是唯一的，因为服务端必要时将动态修改它，为了确保你对终端用户的版本更新语义上的维护。例如：设想你的应用有如下3个更新：
 
-| Release | Mandatory? |
+| 版本 | 强制？ |
 |---------|------------|
 | v1      | No         |
 | v2      | Yes        |
 | v3      | No         |
 
-If an end-user is currently running `v1`, and they query the server for an update, it will respond with `v3` (since that is the latest), but it will dynamically convert the release to mandatory, since a mandatory update was released in between. This behavior is important since the code contained in `v3` is incremental to that included in `v2`, and therefore, whatever made `v2` mandatory, continues to make `v3` mandatory for anyone that didn't already acquire `v2`.
+如果用户当前是`v1`版本，然后从服务端查询更新，将以`v3`（因为这是最新的）响应，但是它将动态将这个版本转变成强制的，因为中间有一个强制更新的版本。这个行为很重要因为`v3`的代码是在`v2`上增加的，所以任何没有获取`v2`版本的都会不管`v2`的强制，而继续让`v3`变成强制更新版本。
 
 If an end-user is currently running `v2`, and they query the server for an update, it will respond with `v3`, but leave the release as optional. This is because they already received the mandatory update, and therefore, there isn't a need to modify the policy of `v3`. This behavior is why we say that the server will "dynamically convert" the mandatory flag, because as far as the release goes, its mandatory attribute will always be stored using the value you specified when releasing it. It is only changed on-the-fly as necessary when responding to an update check from an end-user.
 
