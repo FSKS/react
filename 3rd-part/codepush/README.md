@@ -342,24 +342,25 @@ code-push release <appName> <updateContents> <targetBinaryVersion>
 | 版本 | 强制？ |
 |---------|------------|
 | v1      | No         |
-| v2      | Yes        |
+| v2      | Yes       |
 | v3      | No         |
 
 如果用户当前是`v1`版本，然后从服务端查询更新，将以`v3`（因为这是最新的）响应，但是它将动态将这个版本转变成强制的，因为中间有一个强制更新的版本。这个行为很重要因为`v3`的代码是在`v2`上增加的，所以任何没有获取`v2`版本的都会不管`v2`的强制，而继续让`v3`变成强制更新版本。
 
-If an end-user is currently running `v2`, and they query the server for an update, it will respond with `v3`, but leave the release as optional. This is because they already received the mandatory update, and therefore, there isn't a need to modify the policy of `v3`. This behavior is why we say that the server will "dynamically convert" the mandatory flag, because as far as the release goes, its mandatory attribute will always be stored using the value you specified when releasing it. It is only changed on-the-fly as necessary when responding to an update check from an end-user.
+如果用户当前是`v2`版本，然后从服务器查询更新，响应结果为`v3`，但会留着这个版本作为可选的。这个因为他们已经接受了强制更新，所以没有必要去修改`v3`。这样的行为就是为什么我们说服务器会"动态改变"强制标签，因为随着版本的迭代，新版本的强制属性总会保存你设置的这个值。当有一个版本更新检查要响应给用户时，它只会在相邻的版本上改变。
 
 If you never release an update that is marked as mandatory, then the above behavior doesn't apply to you, since the server will never change an optional release to mandatory unless there were intermingled mandatory updates as illustrated above. Additionally, if a release is marked as mandatory, it will never be converted to optional, since that wouldn't make any sense. The server will only change an optional release to mandatory in order to respect the semantics described above.
 
-*NOTE: This 参数 can be set using either `--mandatory` or `-m`*
+*注意：这个参数可以用`--mandatory` 或 `-m`来设置*
 
 #### Rollout 参数
 
-**IMPORTANT: In order for this 参数 to actually take affect, your end users need to be running version `1.6.0-beta+` (for Cordova) or `1.9.0-beta+` (for React Native) of the CodePush plugin. If you release an update that specifies a rollout property, no end user running an older version of the Cordova or React Native plugins will be eligible for the update. Therefore, until you have adopted the neccessary version of the CodePush SDK, we would advise not setting a rollout value on your releases, since no one would end up receiving it.**
+**重要：为了使这个参数有效，终端用户需要运行CodePush插件的`1.6.0-beta+`版本 (Cordova) 或 `1.9.0-beta+`版本 (React Native)。如果你发布了一个指明了首次展示(Rollout)属性的更新，那么运行老版本的Cordova或ReactNative用户不会更新。因此，直到你已经采取了必要CodePush SDK的版本，否则我们不建议设置一个首次展示(rollout)版本，因为没有人会接受它。**
+
 
 This specifies the percentage of users (as an integer between `1` and `100`) that should be eligible to receive this update. It can be helpful if you want to "flight" new releases with a portion of your audience (e.g. 25%), and get feedback and/or watch for exceptions/crashes, before making it broadly available for everyone. If this 参数 isn't set, it is set to `100%`, and therefore, you only need to set it if you want to actually limit how many users will receive it.
 
- When leveraging the rollout capability, there are a few additional considerations to keep in mind:
+当借用首次展现(rollout)能力，要记住一些额外注意事项：
 
 1. You cannot release a new update to a deployment whose latest release is an "active" rollout (i.e. its rollout property is non-null). The rollout needs to be "completed" (i.e. setting the `rollout` property to `100`) before you can release further updates to the deployment.
 
@@ -367,13 +368,14 @@ This specifies the percentage of users (as an integer between `1` and `100`) tha
 
 3. Unlike the `mandatory` and `description` fields, when you promote a release from one deployment to another, it will not propagate the `rollout` property, and therefore, if you want the new release (in the target deployment) to have a rollout value, you need to explicitly set it when you call the `promote` command.
 
-*NOTE: This 参数 can be set using either `--rollout` or `-r`*
+*注意：这个参数可以用 `--rollout` or `-r` 来设置*
 
 #### Disabled 参数
 
+这个指明一个版本更新是否可以被用户下载。如果没有指定，版本更新不会是无效的（如：用户将要下载的那一刻你的应用称为`同步`）。
 This specifies whether an update should be downloadable by end users or not. If left unspecified, the update will not be disabled (i.e. users will download it the moment your app calls `sync`). This 参数 can be valuable if you want to release an update that isn't immediately available, until you expicitly [patch it](#patching-releases) when you want end users to be able to download it (e.g. an announcement blog post went live).
 
-*NOTE: This 参数 can be set using either "--disabled" or "-x"*
+*注意：这个参数可以用 "--disabled" or "-x"来设置*
 
 ### 发布更新 (React Native)
 
