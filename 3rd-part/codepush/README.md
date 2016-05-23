@@ -372,8 +372,7 @@ This specifies the percentage of users (as an integer between `1` and `100`) tha
 
 #### Disabled 参数
 
-这个指明一个版本更新是否可以被用户下载。如果没有指定，版本更新不会是无效的（如：用户将要下载的那一刻你的应用称为`同步`）。
-This specifies whether an update should be downloadable by end users or not. If left unspecified, the update will not be disabled (i.e. users will download it the moment your app calls `sync`). This 参数 can be valuable if you want to release an update that isn't immediately available, until you expicitly [patch it](#patching-releases) when you want end users to be able to download it (e.g. an announcement blog post went live).
+这个指明一个版本更新是否可以被用户下载。如果没有指定，版本更新不会是无效的（如：用户将要下载的那一刻你的应用称为`同步`）。如果你想发布一个更新但不是立即生效，那么这个参数是有价值的，直到你明确用[补丁](#补丁更新)发布，当你要让用户能够下载（如：公告博客上线）。
 
 *注意：这个参数可以用 "--disabled" or "-x"来设置*
 
@@ -392,14 +391,13 @@ code-push release-react <appName> <platform>
 [--targetBinaryVersion <targetBinaryVersion>]
 [--rollout <rolloutPercentage>]
 ```
+`release-react`命令是React Native特有的[`发布`](#发布更新-react-native)命令，支持相同的所有参数（如：`--mandatory`,`--description`），然而通过如下额外的动作简化了发布更新过程：
+ 
+1. 运行`react-native bundle`命令去生成将要发布到CodePush服务的[更新](#update-contents-params)(JS Bundle和资源)。它尽可能使用合理的默认值(如：创建一个non-dev构建,假设一个iOS入口文件被命名为“index.ios.js”)，但也暴露了有关`react-native bundle`参数使得灵活（如：`--sourcemapOutput`）。
 
-The `release-react` command is a React Native-specific version of the "vanilla" [`release`](#releasing-app-updates) command, which supports all of the same 参数s (e.g. `--mandatory`, `--description`), yet simplifies the process of releasing updates by performing the following additional behavior:
+2. 推断[`目标二进制版本`](#target-binary-version-param)通过使用定义在项目文件`info.plist`(IOS)和`build.gradle`(Android)里的版本名。
 
-1. Running the `react-native bundle` command in order to generate the [update contents](#update-contents-参数) (JS bundle and assets) that will be released to the CodePush server. It uses sensible defaults as much as possible (e.g. creating a non-dev build, assuming an iOS entry file is named `index.ios.js`), but also exposes the relevant `react-native bundle` 参数s to enable flexibility (e.g. `--sourcemapOutput`).
-
-2. Inferring the [`targetBinaryVersion`](#target-binary-version-参数) of this release by using the version name that is specified in your project's `Info.plist` (for iOS) and `build.gradle` (for Android) files.
-
-To illustrate the difference that the `release-react` command can make, the following is an example of how you might generate and release an update for a React Native app using the "vanilla" `release` command:
+为了阐述`release-react`命令产生的差异，如下的例子是你可能如何生成和发布一个React Native应用版本更新，通过使用`release`命令：
 
 ```shell
 mkdir ./CodePush
@@ -413,69 +411,69 @@ react-native bundle --platform ios \
 code-push release MyApp ./CodePush 1.0.0
 ```
 
-Achieving the equivalent behavior with the `release-react` command would simply require the following command, which is generally less error-prone:
+用`release-react`命令实现等效的行为只需简单的如下的命令，这个通常更,这是通常更少出错：
 
 ```shell
 code-push release-react MyApp ios
 ```
 
-*NOTE: We believe that the `release-react` command should be valuable for most React Native developers, so if you're finding that it isn't flexible enough or missing a key feature, please don't hesistate to [let us know](mailto:codepushfeed@microsoft.com), so that we can improve it.*
+*注意：我们相信`release-react`命令对大多数React Native的开发者是有价值的，所以如果你发现它不够灵活或者缺少关键功能，不要犹豫请[让我知道](mailto:codepushfeed@microsoft.com)，以便我们可以提高它。*
 
 #### App name 参数
 
-This is the same 参数 as the one described in the [above section](#app-name-参数).
+这个参数跟[上面章节](#App name (应用名)参数)描述的一样。
 
 #### Platform 参数
 
-This specifies which platform the current update is targeting, and can be either `android`, `ios` or `windows` (case-insensitive).
+指定当前的更新是哪个平台的，可以是`android`， `ios`， 或`windows`（不区分大小写）。
 
 #### Deployment name 参数
 
-This is the same 参数 as the one described in the [above section](#deployment-name-参数).
+相同的参数跟 [上面的章节](#deployment-name-参数)描述一样。
 
 #### Description 参数
 
-This is the same 参数 as the one described in the [above section](#description-参数).
+相同的参数跟 [上面的章节](#description-参数)描述一样。
 
 #### Mandatory 参数
 
-This is the same 参数 as the one described in the [above section](#mandatory-参数).
+相同的参数跟 [上面的章节](#mandatory-参数)描述一样。
 
 #### Rollout 参数
 
-This is the same 参数 as the one described in the [above section](#rollout-参数). If left unspecified, the release will be made available to all users.
+相同的参数跟 [上面的章节](#rollout-参数)描述一样。如果没有指定，版本将对所有用户有效可下载。
 
 #### Target binary version 参数
 
-This is the same 参数 as the one described in the [above section](#target-binary-version-参数). If left unspecified, this defaults to targeting the exact version specified in the app's `Info.plist` (for iOS) and `build.gradle` (for Android) files.
+相同的参数跟 [上面的章节](#target-binary-version-参数)描述一样。如果没有指定，默认使用`Info.plist` (iOS) and `build.gradle` (Android)文件里指定的精确版本号。
 
 #### Disabled 参数
 
-This is the same 参数 as the one described in the [above section](#disabled-参数).
+相同的参数跟 [上面的章节](#disabled-参数))描述一样。
 
 #### Development 参数
 
-This specifies whether to generate a unminified, development JS bundle. If left unspecified, this defaults to `false` where warnings are disabled and the bundle is minified.
+这个指明是否要生成一个非最小化，开发的JS bundle文件。如果没有指明，默认是`false`，禁用警告提示并且bundle文件是最小化的。
 
-*NOTE: This 参数 can be set using either --develoment or --dev*
+*注意：这个参数可以配置成`--development` 或`--dev`*
 
 #### Entry file 参数
 
-This specifies the relative path to the app's root/entry JavaScript file. If left unspecified, this defaults to `index.ios.js` (for iOS),  `index.android.js` (for Android) or `index.windows.bundle` (for Windows) if that file exists, or `index.js` otherwise.
+指明相对应用根目录的路径入口JavaScript 文件。如果没有指定，默认是：如果存在`index.ios.js`(IOS), `index.android.js`(Android), 或者`index.windows.bundle`(Windows)，否则`index.js`。
 
-*NOTE: This 参数 can be set using either --entryFile or -e*
+*注意：参数可以配置成`--entryFile`或`-e`*
 
 #### Bundle name 参数
 
-This specifies the file name that should be used for the generated JS bundle. If left unspecified, the standard bundle name will be used for the specified platform: `main.jsbundle` (iOS), `index.android.bundle` (Android) and `index.windows.bundle` (Windows).
+指明生成JS Bundle的文件名。如果没有指定，特定平台将会用的标准bundle名字：`main.jsbundle` (iOS), `index.android.bundle` (Android) and `index.windows.bundle` (Windows).
 
-*NOTE: This 参数 can be set using either --bundleName or -b*
+*注意：参数可以配置成`--bundleName`或`-b`*
 
 #### Sourcemap output 参数
 
-This specifies the relative path to where the generated JS bundle's sourcemap file should be written. If left unspecified, sourcemaps will not be generated.
+指明生成的JS bundle 的sourcemap写入的相对路径。如果没有指定，sourcemaps文件不会生成。
 
-*NOTE: This 参数 can be set using either --sourcemapOutput or -s*
+*注意：参数可以配置成`--sourcemapOutput`或`-s`*
 
 ### 发布更新 (Cordova)
 
@@ -512,7 +510,7 @@ code-push release-cordova MyApp ios
 
 #### App name 参数
 
-This is the same 参数 as the one described in the [above section](#app-name-参数).
+This is the same 参数 as the one described in the [上面的章节](#app-name-参数).
 
 #### Platform 参数
 
@@ -520,27 +518,27 @@ This specifies which platform the current update is targeting, and can be either
 
 #### Deployment name 参数
 
-This is the same 参数 as the one described in the [above section](#deployment-name-参数).
+This is the same 参数 as the one described in the [上面的章节](#deployment-name-参数).
 
 #### Description 参数
 
-This is the same 参数 as the one described in the [above section](#description-参数).
+This is the same 参数 as the one described in the [上面的章节](#description-参数).
 
 #### Mandatory 参数
 
-This is the same 参数 as the one described in the [above section](#mandatory-参数).
+This is the same 参数 as the one described in the [上面的章节](#mandatory-参数).
 
 #### Rollout 参数
 
-This is the same 参数 as the one described in the [above section](#rollout-参数). If left unspecified, the release will be made available to all users.
+This is the same 参数 as the one described in the [上面的章节](#rollout-参数). If left unspecified, the release will be made available to all users.
 
 #### Target binary version 参数
 
-This is the same 参数 as the one described in the [above section](#target-binary-version-参数). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
+This is the same 参数 as the one described in the [上面的章节](#target-binary-version-参数). If left unspecified, the command defaults to targeting only the specified version in the project's metadata (`Info.plist` if this update is for iOS clients, and `build.gradle` for Android clients).
 
 #### Disabled 参数
 
-This is the same 参数 as the one described in the [above section](#disabled-参数).
+This is the same 参数 as the one described in the [上面的章节](#disabled-参数).
 
 #### Build 参数
 
@@ -579,25 +577,25 @@ Indicates which release (e.g. `v23`) you want to update within the specified dep
 
 ### Mandatory 参数
 
-This is the same 参数 as the one described in the [above section](#mandatory-参数), and simply allows you to update whether the release should be considered mandatory or not. Note that `--mandatory` and `--mandatory true` are equivalent, but the absence of this flag is not equivalent to `--mandatory false`. Therefore, if the 参数 is ommitted, no change will be made to the value of the target release's mandatory property. You need to set this to `--mandatory false` to explicitly make a release optional.
+This is the same 参数 as the one described in the [上面的章节](#mandatory-参数), and simply allows you to update whether the release should be considered mandatory or not. Note that `--mandatory` and `--mandatory true` are equivalent, but the absence of this flag is not equivalent to `--mandatory false`. Therefore, if the 参数 is ommitted, no change will be made to the value of the target release's mandatory property. You need to set this to `--mandatory false` to explicitly make a release optional.
 
 ### Description 参数
 
-This is the same 参数 as the one described in the [above section](#description-参数), and simply allows you to update the description associated with the release (e.g. you made a typo when releasing, or you forgot to add a description at all). If this 参数 is ommitted, no change will be made to the value of the target release's description property.
+This is the same 参数 as the one described in the [上面的章节](#description-参数), and simply allows you to update the description associated with the release (e.g. you made a typo when releasing, or you forgot to add a description at all). If this 参数 is ommitted, no change will be made to the value of the target release's description property.
 
 ### Disabled 参数
 
-This is the same 参数 as the one described in the [above section](#disabled-参数), and simply allows you to update whether the release should be disabled or not. Note that `--disabled` and `--disabled true` are equivalent, but the absence of this flag is not equivalent to `--disabled false`. Therefore, if the paremeter is ommitted, no change will be made to the value of the target release's disabled property. You need to set this to `--disabled false` to explicity make a release acquirable if it was previously disabled.
+This is the same 参数 as the one described in the [上面的章节](#disabled-参数), and simply allows you to update whether the release should be disabled or not. Note that `--disabled` and `--disabled true` are equivalent, but the absence of this flag is not equivalent to `--disabled false`. Therefore, if the paremeter is ommitted, no change will be made to the value of the target release's disabled property. You need to set this to `--disabled false` to explicity make a release acquirable if it was previously disabled.
 
 ### Rollout 参数
 
-This is the same 参数 as the one described in the [above section](#rollout-参数), and simply allows you to increase the rollout percentage of the target release. This 参数 can only be set to an integer whose value is greater than the current rollout value. Additionally, if you want to "complete" the rollout, and therefore, make the release available to everyone, you can simply set this 参数 to `--rollout 100`. If this 参数 is ommitted, no change will be made to the value of the target release's rollout 参数.
+This is the same 参数 as the one described in the [上面的章节](#rollout-参数), and simply allows you to increase the rollout percentage of the target release. This 参数 can only be set to an integer whose value is greater than the current rollout value. Additionally, if you want to "complete" the rollout, and therefore, make the release available to everyone, you can simply set this 参数 to `--rollout 100`. If this 参数 is ommitted, no change will be made to the value of the target release's rollout 参数.
 
 Additionally, as mentioned above, when you release an update without a rollout value, it is treated equivalently to setting the rollout to `100`. Therefore, if you released an update without a rollout, you cannot change the rollout property of it via the `patch` command since that would be considered lowering the rollout percentage.
 
 ### Target binary version 参数
 
-This is the same 参数 as the one described in the [above section](#target-binary-version-参数), and simply allows you to update the semver range that indicates which binary version(s) a release is compatible with. This can be useful if you made a mistake when originally releasing an update (e.g. you specified `1.0.0` but meant `1.1.0`) or you want to increase or decrease the version range that a release supports (e.g. you discovered that a release doesn't work with `1.1.2` after all). If this paremeter is ommitted, no change will be made to the value of the target release's version property.
+This is the same 参数 as the one described in the [上面的章节](#target-binary-version-参数), and simply allows you to update the semver range that indicates which binary version(s) a release is compatible with. This can be useful if you made a mistake when originally releasing an update (e.g. you specified `1.0.0` but meant `1.1.0`) or you want to increase or decrease the version range that a release supports (e.g. you discovered that a release doesn't work with `1.1.2` after all). If this paremeter is ommitted, no change will be made to the value of the target release's version property.
 
 ```shell
 # Add a "max binary version" to an existing release
@@ -628,23 +626,23 @@ We recommend that all users take advantage of the automatically created `Staging
 
 ### Description 参数
 
-This is the same 参数 as the one described in the [above section](#description-参数), and simply allows you to override the description that will be used for the promoted release. If unspecified, the new release will inherit the description from the release being promoted.
+This is the same 参数 as the one described in the [上面的章节](#description-参数), and simply allows you to override the description that will be used for the promoted release. If unspecified, the new release will inherit the description from the release being promoted.
 
 #### Disabled 参数
 
-This is the same 参数 as the one described in the [above section](#disabled-参数), and simply allows you to override the value of the disabled flag that will be used for the promoted release. If unspecified, the new release will inherit the disabled property from the release being promoted.
+This is the same 参数 as the one described in the [上面的章节](#disabled-参数), and simply allows you to override the value of the disabled flag that will be used for the promoted release. If unspecified, the new release will inherit the disabled property from the release being promoted.
 
 ### Mandatory 参数
 
-This is the same 参数 as the one described in the [above section](#mandatory-参数), and simply allows you to override the mandatory flag that will be used for the promoted release. If unspecified, the new release will inherit the mandatory property from the release being promoted.
+This is the same 参数 as the one described in the [上面的章节](#mandatory-参数), and simply allows you to override the mandatory flag that will be used for the promoted release. If unspecified, the new release will inherit the mandatory property from the release being promoted.
 
 ### Rollout 参数
 
-This is the same 参数 as the one described in the [above section](#rollout-参数), and allows you to specify whether the newly created release should only be made available to a portion of your users. Unlike the other release metadata 参数s (e.g. `description`), the `rollout` of a release is not carried over/inherited as part of a promote, and therefore, you need to explicitly set this if you don't want the newly created release to be available to all of your users.
+This is the same 参数 as the one described in the [上面的章节](#rollout-参数), and allows you to specify whether the newly created release should only be made available to a portion of your users. Unlike the other release metadata 参数s (e.g. `description`), the `rollout` of a release is not carried over/inherited as part of a promote, and therefore, you need to explicitly set this if you don't want the newly created release to be available to all of your users.
 
 ### Target binary version 参数
 
-This is the same 参数 as the one described in the [above section](#target-binary-version-参数), and simply allows you to override the target binary version that will be used for the promoted release. If unspecified, the new release will inherit the target binary version property from the release being promoted.
+This is the same 参数 as the one described in the [上面的章节](#target-binary-version-参数), and simply allows you to override the target binary version that will be used for the promoted release. If unspecified, the new release will inherit the target binary version property from the release being promoted.
 
 ```shell
 # Promote the release to production and make it 
