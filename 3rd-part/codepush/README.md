@@ -548,7 +548,7 @@ Specifies whether you want to run `cordova build` instead of `cordova prepare` (
 
 ## 补丁更新
 
-After releasing an update, there may be scenarios where you need to modify one or more of the attributes associated with it (e.g. you forgot to mark a critical bug fix as mandatory, you want to increase the rollout percentage of an update). You can easily do this by running the following command:
+在发布更新之后，可能有这样的场景，你需要修改一个或多个相关的属性（如：你忘记给一个严重的Bug修复打上强制标记了，你想增加更新的首次展示百分比）。你可以很容易的用下面的命令行来实现：
 
 ```shell
 code-push patch <appName> <deploymentName>
@@ -559,7 +559,7 @@ code-push patch <appName> <deploymentName>
 [--targetBinaryVersion <targetBinaryVersion>]
 ```
 
-Aside from the `appName` and `deploymentName`, all 参数s are optional, and therefore, you can use this command to update just a single attribute or all of them at once. Calling the `patch` command without specifying any attribute flag will result in a no-op.
+抛开`appName` 和 `deploymentName`，所有参数是可选的，所以，你可以用这个命令一次性更新单个或者所有属性。调用`patch`命令而不指定任何属性将不产生任何操作结果。
 
 ```shell
 # Mark the latest production release as mandatory
@@ -571,41 +571,41 @@ code-push patch MyApp Production -l v23 -rollout 50%
 
 ### Label 参数
 
-Indicates which release (e.g. `v23`) you want to update within the specified deployment. If ommitted, the requested changes will be applied to the latest release in the specified deployment. In order to look up the label for the release you want to update, you can run the `code-push deployment history` command and refer to the `Label` column.
+表明你想在指定的部署环境里更新哪个发布版本（如：`v23`）。如果省略了，那要求的变化将应用到指定的部署环境的最新版本上。为了查看你想更新的版本标签，你可以运行`code-push deployment history`命令并参见`Label`列。
 
-*NOTE: This 参数 can be set using either `--label` or `-l`*
+*注意：这个参数可以设置成`--label`或`-l`*
 
 ### Mandatory 参数
 
-This is the same 参数 as the one described in the [上面的章节](#mandatory-参数), and simply allows you to update whether the release should be considered mandatory or not. Note that `--mandatory` and `--mandatory true` are equivalent, but the absence of this flag is not equivalent to `--mandatory false`. Therefore, if the 参数 is ommitted, no change will be made to the value of the target release's mandatory property. You need to set this to `--mandatory false` to explicitly make a release optional.
+同样的参数跟[上面的章节](#mandatory-参数)描述一致，简单的允许你更改这个版本是否考虑强制更新。注意`--mandatory`和`--mandatory true`是同等的，但是缺少这个标记不等于`--mandatory false`。所以，如果参数省略了，对目标版本的强制性属性来说不会产生任何改变。你需要设置`--mandatory false`去明确的标识版本是可选的。
 
 ### Description 参数
 
-This is the same 参数 as the one described in the [上面的章节](#description-参数), and simply allows you to update the description associated with the release (e.g. you made a typo when releasing, or you forgot to add a description at all). If this 参数 is ommitted, no change will be made to the value of the target release's description property.
+同样的参数跟[上面的章节](#description-参数)描述一致，简单的允许你更改关联版本的描述（如：你在发布时写了个错别字，或者你完全忘记添加一个描述了）。如果参数省略掉了，那么对于目标版本的描述属性来说不会有任何改动。
 
 ### Disabled 参数
 
-This is the same 参数 as the one described in the [上面的章节](#disabled-参数), and simply allows you to update whether the release should be disabled or not. Note that `--disabled` and `--disabled true` are equivalent, but the absence of this flag is not equivalent to `--disabled false`. Therefore, if the paremeter is ommitted, no change will be made to the value of the target release's disabled property. You need to set this to `--disabled false` to explicity make a release acquirable if it was previously disabled.
+同样的参数跟[上面的章节](#disabled-参数)描述一致，简单的允许你去更改发布的版本是否无效。注意`--disabled`和`--disabled true`是等同的，但是缺省这个标识不等于`--disabled false`。所以，如果忽略了该参数，并不会对目标版本的无效(disabled)属性有修改。你需要设置`--disabled false`去明确标识一个以前无效的版本有效。
 
 ### Rollout 参数
 
-This is the same 参数 as the one described in the [上面的章节](#rollout-参数), and simply allows you to increase the rollout percentage of the target release. This 参数 can only be set to an integer whose value is greater than the current rollout value. Additionally, if you want to "complete" the rollout, and therefore, make the release available to everyone, you can simply set this 参数 to `--rollout 100`. If this 参数 is ommitted, no change will be made to the value of the target release's rollout 参数.
+同样的参数跟[上面的章节](#rollout-参数)描述一致，简单的允许你去__增加__目标版本首次展示的百分比。这个参数只能设成一个比当前首次展示值要大的数字。此外，如果你想"完全的"首次展示，因此，让版本对每个人有效，你可以简单的设置参数`--rollout 100`，如果省略了这个参数，目标版本的首次展示(rollout)属性不会有任何改动。
 
-Additionally, as mentioned above, when you release an update without a rollout value, it is treated equivalently to setting the rollout to `100`. Therefore, if you released an update without a rollout, you cannot change the rollout property of it via the `patch` command since that would be considered lowering the rollout percentage.
+此外，上面提到的，当你发布版本时没有指定首次展示(rollout)的值时，它相当于是被设置成了`100`。因此，如果你发布一个没有首次展示的更新，那你不可以通过`patch`命令改变rollout属性，因为那样是被认为在降低首次展示(rolltout)百分比。
 
 ### Target binary version 参数
 
-This is the same 参数 as the one described in the [上面的章节](#target-binary-version-参数), and simply allows you to update the semver range that indicates which binary version(s) a release is compatible with. This can be useful if you made a mistake when originally releasing an update (e.g. you specified `1.0.0` but meant `1.1.0`) or you want to increase or decrease the version range that a release supports (e.g. you discovered that a release doesn't work with `1.1.2` after all). If this paremeter is ommitted, no change will be made to the value of the target release's version property.
+同样的参数跟[上面的章节](#target-binary-version-参数)描述一致，简单的允许你去更改语义版本范围表明兼容哪个版本版本。这个可以很有用，如果你在最初发布时犯了个错（如：你指定`1.0.0`但本意`1.1.0`）或你想增加或减少版本支持的版本范围（如：你发现一个版本总是不能在`1.1.2`版本上正常运行）。如果省略了这个参数，目标版本的版本号属性不会有任何改动。
 
 ```shell
-# Add a "max binary version" to an existing release
-# by scoping its eligibility to users running >= 1.0.5
+# 给意境存在的版本添加一个"最大二进制版本"范围
+#  by scoping its eligibility to users running >= 1.0.5
 code-push patch MyApp Staging -t "1.0.0 - 1.0.5"
 ```
 
 ## 促进更新
 
-Once you've tested an update against a specific deployment (e.g. `Staging`), and you want to promote it "downstream" (e.g. dev->staging, staging->production), you can simply use the following command to copy the release from one deployment to another:
+一旦测试完指定部署环境的版本更新（如：`Staging`），你想把它向下游推进（如：dev->staging, staging->production)，你可以简单的用如下命令去从一个部署环境拷贝到另一个：
 
 ```
 code-push promote <appName> <sourceDeploymentName> <destDeploymentName>
@@ -616,33 +616,33 @@ code-push promote <appName> <sourceDeploymentName> <destDeploymentName>
 [--targetBinaryVersion <targetBinaryVersion]
 ```
 
-The `promote` command will create a new release for the destination deployment, which includes the **exact code and metadata** (description, mandatory and target binary version) from the latest release of the source deployment. While you could use the `release` command to "manually" migrate an update from one environment to another, the `promote` command has the following benefits:
+这个`promote`命令将在部署环境里创建一个新的版本，包含**准确的代码和元数据**（描述，强制和目标版本号）来自源部署环境的最新版本。然而你可以用`release`命令去"手动"从一个环境移植更新到另一个环境，`promote`命令有如下优势：
 
-1. It's quicker, since you don't need to reassemble the release assets you want to publish or remember the description/app store version that are associated with the source deployment's release.
+1. 它更快些，因为你不需要重新装配版本资源，那些你想发布或记住源部署环境的版本的描述/应用版本。
 
-2. It's less error-prone, since the promote operation ensures that the exact thing that you already tested in the source deployment (e.g. `Staging`) will become active in the destination deployment (e.g. `Production`).
+2. 它更少出错，因为提升的操作确保你在源部署环境（如：`Staging`）已经测试过的那些确定的东西将在目标部署环境（如：`Production`）变成有效的。
 
-We recommend that all users take advantage of the automatically created `Staging` and `Production` environments, and do all releases directly to `Staging`, and then perform a `promote` from `Staging` to `Production` after performing the appropriate testing.
+我们推荐所有的用户利用自动创建的`Staging`和`Production`环境的优势，把所有的版本发布到`Staging`，然后经过适当的测试后从`Staging`执行`promote`到`Production`。
 
 ### Description 参数
 
-This is the same 参数 as the one described in the [上面的章节](#description-参数), and simply allows you to override the description that will be used for the promoted release. If unspecified, the new release will inherit the description from the release being promoted.
+相同的参数在[上面的章节](#description-参数)描述过，简单的允许你覆写将使用的提升版本的描述。如果没有指定，新的版本将继承被提升的版本描述。
 
 #### Disabled 参数
 
-This is the same 参数 as the one described in the [上面的章节](#disabled-参数), and simply allows you to override the value of the disabled flag that will be used for the promoted release. If unspecified, the new release will inherit the disabled property from the release being promoted.
+相同的参数在参数[上面的章节](#disabled-参数)描述过，简单的允许你去覆写将使用的提升版本的失效标记的值。如果没有指定，新版本将继承被提升版本的失效(disabled)属性。
 
 ### Mandatory 参数
 
-This is the same 参数 as the one described in the [上面的章节](#mandatory-参数), and simply allows you to override the mandatory flag that will be used for the promoted release. If unspecified, the new release will inherit the mandatory property from the release being promoted.
+相同的参数在参数[上面的章节](#mandatory-参数)描述过，简单的允许你覆写将使用的提升版本的强制标记。如果没有指定，新版本将继承被提升版本的强制属性的值。
 
 ### Rollout 参数
 
-This is the same 参数 as the one described in the [上面的章节](#rollout-参数), and allows you to specify whether the newly created release should only be made available to a portion of your users. Unlike the other release metadata 参数s (e.g. `description`), the `rollout` of a release is not carried over/inherited as part of a promote, and therefore, you need to explicitly set this if you don't want the newly created release to be available to all of your users.
+相同的参数在参数[上面的章节](#rollout-参数)描述过， 允许你指定新创建的版本是否只对部分用户有效。不像其它的元数据参数（如：`description`），版本的`rollout`属性不会做为提升的一部分而携带过来，所以，如果你不想新的版本对所有用户有效的话，你需要明确去设置它。
 
 ### Target binary version 参数
 
-This is the same 参数 as the one described in the [上面的章节](#target-binary-version-参数), and simply allows you to override the target binary version that will be used for the promoted release. If unspecified, the new release will inherit the target binary version property from the release being promoted.
+相同的参数在[上面的章节](#target-binary-version-参数)描述过，简单的允许你覆写使用的提升版本的版本号(target binary version)。如果没有指定，新的版本将继承被提升版本的版本号。
 
 ```shell
 # Promote the release to production and make it 
@@ -652,64 +652,65 @@ code-push promote MyApp Staging Production -t "*"
 
 ## 回滚更新
 
-A deployment's release history is immutable, so you cannot delete or remove an update once it has been released. However, if you release an update that is broken or contains unintended features, it is easy to roll it back using the `rollback` command:
+一个部署环境的发布历史是不可以改变的，所以一旦被发布你不能删除或移除更新。然而，如果你发布了一个坏的更新或包含计划外的功能，使用`rollback`命令很容易把它回滚：
 
 ```
 code-push rollback <appName> <deploymentName>
 code-push rollback MyApp Production
 ```
 
-This has the effect of creating a new release for the deployment that includes the **exact same code and metadata** as the version prior to the latest one. For example, imagine that you released the following updates to your app:
+这个的影响是在部署环境里创建一个包含**精确的代码和资源**的新版本，比最新版本更优先的一个版本。举个例子，想象你发布了如下更新：
 
-| Release | Description       | Mandatory |
+| 版本 | 描述       | 强制 |
 |---------|-------------------|-----------|
-| v1      | Initial release!  | Yes       |
-| v2      | Added new feature | No        |
-| v3      | Bug fixes         | Yes       |
+| v1      | 初始化版本!  | Yes       |
+| v2      | 添加新功能   | No        |
+| v3      | 修复Bugs      | Yes       |
 
-If you ran the `rollback` command on that deployment, a new release (`v4`) would be created that included the contents of the `v2` release.
+如果你在部署环境里运行`rollback`命令，一个包含`v2`版本内容的新的版本(`v4`)将会被创建。
 
-| Release                     | Description       | Mandatory |
-|-----------------------------|-------------------|-----------|
-| v1                          | Initial release!  | Yes       |
-| v2                          | Added new feature | No        |
-| v3                          | Bug fixes         | Yes       |
-| v4 (Rollback from v3 to v2) | Added new feature | No        |
+| 版本 | 描述       | 强制 |
+|---------|-------------------|-----------|
+| v1      | 初始化版本!  | Yes       |
+| v2      | 添加新功能   | No        |
+| v3      | 修复Bugs      | Yes       |
+| v4 (从v3回滚到v2) | 添加新功能 | No        |
 
-End-users that had already acquired `v3` would now be "moved back" to `v2` when the app performs an update check. Additionally, any users that were still running `v2`, and therefore, had never acquired `v3`, wouldn't receive an update since they are already running the latest release (this is why our update check uses the package hash in addition to the release label).
+当app执行版本检查时，已经获得`v3`版本的用户现在被"回滚"到`v2`版本。此外，任何仍运行在`v2`版本的用户，因而将不会捕获到`v3`版本，因为他/她们已经在运行最新的版本（这就是为什么我们使用附加在版本标签里的包的hash来做版本检查）。
 
-If you would like to rollback a deployment to a release other than the previous (e.g. `v3` -> `v2`), you can specify the optional `--targetRelease` 参数:
+
+如果你想回滚部署环境到一个版本而不是前一个版本（如：`v3` -> `v2`），你可以指定一个可选的`--targetRelease`参数：
 
 ```
 code-push rollback MyApp Production --targetRelease v34
 ```
 
-*NOTE: The release produced by a rollback will be annotated in the output of the `deployment history` command to help identify them more easily.*
+*注意：由回滚产生的版本将会在`deployment history`命令的输出里被注释，以便助于更容易被辨识出来。*
 
-## Viewing Release History
+## 查看发布历史
 
-You can view a history of the 50 most recent releases for a specific app deployment using the following command:
+你可以使用如下命令查看某个应用的部署环境里最多50条最新的发布历史：
 
 ```
 code-push deployment history <appName> <deploymentName>
 ```
 
-The history will display all attributes about each release (e.g. label, mandatory) as well as indicate if any releases were made due to a promotion or a rollback operation.
+这个历史纪录将显示每个版本的所有的属性（如：标签，强制性），也会标明任何版本是否由提升(promotion)或是回滚操作而来。
 
 ![Deployment History](https://cloud.githubusercontent.com/assets/696206/11605068/14e440d0-9aab-11e5-8837-69ab09bfb66c.PNG)
 
-Additionally, the history displays the install metrics for each release. You can view the details about how to interpret the metric data in the documentation for the `deployment ls` command above.
+此外，历史记录显示每个版本的安装指标。你可以在文档的上面`deployment ls`命令处查看指标数据的解释明细。
 
-By default, the history doesn't display the author of each release, but if you are collaborating on an app with other developers, and want to view who released each update, you can pass the additional `--displayAuthor` (or `-a`) flag to the history command.
+默认情况下，历史纪录不会显示各个版本的作者，但是如果你是和其它开发者合作的，而且想看每个更新是谁发布的，那你可以给历史命令传额外的`--displayAuthor`(或`-a`)标记。
 
-*NOTE: The history command can also be run using the "h" alias*
+*注意：历史命令可以使用"h"别名来运行*
 
-## Clearing Release History
+## 清除发布历史
 
-You can clear the release history associated with a deployment using the following command:
+你可以用如下命令清除相关的发布历史：
 
 ```
 code-push deployment clear <appName> <deploymentName>
 ```
 
-After running this command, client devices configured to receive updates using its associated deployment key will no longer receive the updates that have been cleared. This command is irreversible, and therefore should not be used in a production deployment.
+运行此命令后，那些已经配置了使用关联的部署密钥的客户端设备将不再接收被清除掉的更新。这个命令是不可逆的,因此不应该使用在生产部署。
