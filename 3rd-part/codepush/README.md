@@ -3,8 +3,7 @@
 CodePush是一个云服务，它能让Cordova和React Native的开发者将手机应用的更新直接部署到用户的设备上。
 它担任类似中间仓库的角色，开发者可以把更新（JS，HTML，CSS和图片）发布到这个仓库上，然后那些Apps就能查询到更新了（那些集成了CodePush SDKs的[Cordova](http://github.com/Microsoft/cordova-plugin-code-push)和[React Native](http://github.com/Microsoft/react-native-code-push) 应用）。
 
-这就让你可以与你的用户群有一个更确定且直接的交互模式，当你解决Bug或添加小功能时，不用重新构建二进制文件然后在各自的AppStore里重新发布。
-（原文是：This allows you to have a more deterministic and direct engagement model with your user base, when addressing bugs and/or adding small features that don't require you to re-build a binary and re-distribute it through the respective app stores.）
+这就让你可以与你的用户群有一个更确定且直接的交互模式，当你定位到Bug或添加小功能时，就不需要重新构建二进制文件再在各AppStore里重新发布了。
 
 ![CodePush CLI](https://cloud.githubusercontent.com/assets/116461/14505396/c97bdc78-016d-11e6-89da-3f3557f8b33d.png)
 
@@ -40,24 +39,25 @@ CodePush是一个云服务，它能让Cordova和React Native的开发者将手�
 
 ## 创建账号
 
-在你发布应用更新之前，你需要创建一个CodePush帐号。一旦你安装了Cli你就可以简单的使用如下命令来注册：running the following command once you've installed the CLI:
+在你发布应用更新之前，你需要创建一个CodePush帐号。一旦你安装了Cli你就可以简单的使用如下命令来注册：
 
 ```
 code-push register
 ```
 
-这将会启动浏览器，要求验证你的Github或微软帐号。一旦验证成功，它将创建一个CodePush帐号跟你的Github或MSA相连，而且生成一个Access Key，你可以拷贝/粘贴到CLI以便登录。
+这将会启动浏览器，要求验证你的Github或微软帐号。一旦验证成功，它将创建一个CodePush帐号跟你的Github或MSA相连，并生成一个访问密钥(Access Key)，你可以拷贝/粘贴到CLI以便登录。
 
 *注意：注册成功后，你就已经自动登录了。所以除非你明确登出了，否则你不需要在此机器上再次登录。*
 
-如果你有一个已存在的帐号，你还可以把你的帐号跟另一个帐号关联起来，通过运行：
+如果你已有一个帐号，那你还可以把你的帐号跟另一个身份认证提供商关联起来，通过运行：
+
+（我个人理解：CodePush提供商有Github和Mircosoft，它允许你可以把两个帐号关联起来。）
 
 ```
 code-push link
 ```
 
-注意：为了实现这个，在供应商使用的Email地址必须与你存在的帐号匹配。
-（原文：Note that in order to do this, the email address used on the provider must match the one on your existing account.）
+注意：为了实现这个(关联)的目的，你在另一个身份认证供应商那边用的Email地址必须与你现存的帐号一致。
 
 ## 身份认证
 
@@ -67,7 +67,7 @@ code-push link
 code-push login
 ```
 
-这将会启动浏览器，要求验证你的Github或微软帐号。这将生成一个Access Key，然后你可以拷贝/粘贴到CLI（它会提示你这样做）。这时你就认证成功了，并且可以关掉你的浏览器了。
+这将会启动浏览器，要求验证你的Github或微软帐号。这将生成一个访问密钥(Access Key)，然后你可以拷贝/粘贴到CLI（它会提示你这样做）。这时你就认证成功了，并且可以关掉你的浏览器了。
 
 
 如果在任何时候你想确认你是否已经登录了，你可以运行如下命令来显示与你当前认证会话相关的e-mail帐号，而且这个身份提供者是连接到（如：GitHub）的。
@@ -76,12 +76,13 @@ code-push login
 code-push whoami
 ```
 
-当你从CLI登录后，你的Access Key就一直保存在你本地磁盘上，所以你不必每次使用帐号是都需要登录。为了结束或删除AccessKey，你可以简单的运行如下命令：
+当你从CLI登录后，你的访问密钥(Access Key)就一直保存在你本地磁盘上，所以你不必每次使用帐号是都需要登录。为了终止会话或删除AccessKey，你可以简单的运行如下命令：
 
 ```
 code-push logout
 ```
-如果你在一台机器上忘记登录（比如：你朋友的电脑上），你可以使用如下命令列出和删除任何“有效”的Access Keys。Access Keys列表将显示创建Key的机器名和发生登录的时间。这让你可以简单的认出那些你不想要保存的Keys。
+
+如果你在一台机器上忘记注销（比如：你朋友的电脑上），你可以使用如下命令列出和删除任何“激活中”的Access Keys。Access Keys列表将显示创建Key的机器名和发生登录的时间。这让你可以简单的认出那些你不想要保存的Keys。
 
 ```
 code-push access-key ls
