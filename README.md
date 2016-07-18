@@ -5,11 +5,11 @@
 ### Topics
 
 1. [Overview](./Topics/Overview.md)
-1. [常用组件专题](./Topics/Components.md)
+1. [常用组件专题](./Topics/Component.md)
 1. [组件扩展专题](./Topics/Extension.md)
 1. [热更新专题](./Topics/Hotfix.md)
 1. [Redux专题](./Topics/Redux.md)
-1. [实例：OmniApp](./Topics/demo.md)
+1. [实例：OmniApp](./Topics/Demo.md)
 
 ### Basic
 1. [React (Native) Introduction](./ReactIntroduction/reactJS_01.md)
